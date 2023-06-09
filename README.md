@@ -7,19 +7,20 @@ Rockbuster Stealth LLC is a fictional movie rental company that used to have sto
 # Data
 The dataset comprises a database with the following tables:
 
-payment
-rental
-store
-film_actor
-inventory
-film_category
-customer
-staff
-actor
-film
-category
-language
-address
-city
-country
+* payment
+* rental
+* store
+* film_actor
+* inventory
+* film_category
+* customer
+* staff
+* actor
+* film
+* category
+* language
+* address
+* city
+* country
+* 
 For a full breakdown of what these tables contain, please reference the ERD.
