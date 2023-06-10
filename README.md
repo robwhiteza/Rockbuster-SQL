@@ -2,7 +2,7 @@
 SQL queries for fictional data on movie rental business as part of CareerFoundry data analytics course.
 
 # Objective
-Rockbuster Stealth LLC is a fictional movie rental company that used to have stores around the world. They are facing difficulties moving ahead in the age of streaming. The objective of this study is to identify where the most loyal customers are located and what films should be kept in inventory based on location in order to cut waste.
+Rockbuster Stealth LLC is a fictional movie rental company that used to have physical stores around the world. They are facing difficulties moving forward in the age of streaming. The objective of this study is to identify where the most loyal customers are located and what films should be kept in inventory to meet customer demand.
 
 # Data
 The dataset comprises a database with the following tables:
@@ -22,5 +22,3 @@ The dataset comprises a database with the following tables:
 * address
 * city
 * country
-* 
-For a full breakdown of what these tables contain, please reference the ERD.
