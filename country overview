@@ -1,0 +1,67 @@
+WITH avg_rentals_per_customer_cte (country, avg_number_of_rentals) AS
+(SELECT
+country,
+AVG(number_of_orders) AS avg_number_of_rentals
+FROM
+(SELECT 
+customer.customer_id,
+COUNT(rental.rental_id) AS number_of_orders,
+country.country
+FROM customer
+INNER JOIN address ON customer.address_id = address.address_id
+INNER JOIN city ON address.city_id = city.city_id
+INNER JOIN country ON city.country_id = country.country_id
+INNER JOIN rental ON customer.customer_id = rental.customer_id
+GROUP BY customer.customer_id, country.country) AS customer_orders
+GROUP BY country
+),
+country_cte (country, total_revenue, total_customers, avg_rental_rate, 
+  avg_rental_length, avg_rental_value) AS 
+  (SELECT
+    A.country AS country,
+    SUM(f.amount) AS total_revenue,
+    COUNT(DISTINCT D.customer_id) AS total_customers,
+    AVG(H.rental_rate) AS avg_rental_rate,
+    AVG(DATE_PART('day', E.return_date - E.rental_date)) AS avg_rental_length,
+    AVG(F.amount) AS avg_rental_value
+  FROM country A
+  INNER JOIN city B ON A.country_id = B.country_id
+  INNER JOIN address C ON B.city_id = C.city_id
+  INNER JOIN customer D ON C.address_id = D.address_id
+  INNER JOIN rental E ON D.customer_id = E.customer_id
+  INNER JOIN payment F ON E.rental_id = F.rental_id
+  INNER JOIN inventory G ON E.inventory_id = G.inventory_id
+  INNER JOIN film H ON G.film_id = H.film_id
+  GROUP BY country
+),
+highest_value_customer_cte (country, highest_value_customer)AS 
+  (SELECT
+    country,
+    MAX(total_payments) AS highest_value_customer
+  FROM
+    (SELECT 
+      A.customer_id,
+      F.country,
+      SUM(C.amount) AS total_payments
+    FROM customer A
+    INNER JOIN rental B ON A.customer_id = B.customer_id
+    INNER JOIN payment C ON B.rental_id = C.rental_id
+    INNER JOIN address D ON A.address_id = D.address_id
+    INNER JOIN city E ON D.city_id = E.city_id
+    INNER JOIN country F ON E.country_id = F.country_id
+    GROUP BY A.customer_id, F.country) AS customer_payments
+  GROUP BY country
+)
+SELECT 
+country_cte.country,
+country_cte.total_revenue,
+  country_cte.total_customers,
+  country_cte.avg_rental_rate,
+  country_cte.avg_rental_length,
+  country_cte.avg_rental_value,
+  avg_rentals_per_customer_cte.avg_number_of_rentals,
+  highest_value_customer_cte.highest_value_customer
+FROM country_cte
+INNER JOIN highest_value_customer_cte ON country_cte.country = highest_value_customer_cte.country
+INNER JOIN avg_rentals_per_customer_cte ON country_cte.country = avg_rentals_per_customer_cte.country
+ORDER BY total_revenue DESC
